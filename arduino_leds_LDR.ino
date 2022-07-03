@@ -3,6 +3,7 @@
 #define KEY_SHORT_PRESS 1 //key pressed short
 #define KEY_LONG_PRESS 2 //key pressed long
 
+
 int vermelho = 10; //translate: vermelho = red;
 int amarelo = 9; //translate: amarelo = yellow;
 int verde = 8;  //translate: verde = green;
@@ -19,7 +20,9 @@ int count;
 int pinoLed = 13;  //translate: pino = pin;
 int pinoLDR = A5;
 int warning_y = A4;
-
+int testLed = A3;
+int LDRblueLed2 = A2;
+int LDRblueLed1 = A1; 
 void setup() {
 
   pinMode(vermelho, OUTPUT);
@@ -36,12 +39,15 @@ void setup() {
   pinMode(pinoLed, OUTPUT);
   pinMode(advertencia, OUTPUT);
   pinMode(warning_y, OUTPUT);
+  pinMode(testLed, OUTPUT);
+  pinMode(LDRblueLed2, OUTPUT);
+  pinMode(LDRblueLed1, OUTPUT);
   
   // Turning on...
-  digitalWrite(verde2, HIGH);
-   digitalWrite(verde, HIGH);
- 
+  
   // .. Turning off:
+   digitalWrite(verde2, LOW);
+   digitalWrite(verde, LOW);
   digitalWrite(amarelo2, LOW);  
   digitalWrite(vermelho2, LOW);
   digitalWrite(vermelho, LOW);
@@ -51,12 +57,13 @@ void setup() {
 digitalWrite(pinoLed, LOW);
    digitalWrite(advertencia, LOW);
   digitalWrite(warning_y, LOW);
+  digitalWrite(testLed, LOW);
 }
 
 void loop() 
 {
    opencount();
-    
+      
   evenAndOdd();
    
    longpress();
@@ -65,13 +72,18 @@ void loop()
    
 }//close loop();
 
-void evenAndOdd()
+void evenAndOdd()//this one has to be a switch of even and odd with these two leds: 
 {
-    //this one has to be a switch of even and odd with these two leds:
    if(count%2==0)
-   {
-  digitalWrite(warning_y, HIGH); //yellow = even;
+   {    
+   digitalWrite(warning_y, HIGH); //yellow = even;
    digitalWrite(advertencia, LOW);//green = odd;
+      
+      if(count%2==0&&count%3==0)
+      {
+      digitalWrite(warning_y, HIGH); //yellow = even;
+      digitalWrite(advertencia, HIGH);//green = odd; 
+      }
    }
    else
    {
@@ -118,17 +130,29 @@ void opencount()
 void pin()//this function may not works well in illuminated places; 
 {
   while(analogRead(pinoLDR) > 100)
-{
-  if(analogRead(pinoLDR) > 100){ 
-    digitalWrite(pinoLed, HIGH);
-    delay(2000);
-    digitalWrite(pinoLed, LOW); 
-    
-  }  
-  else{ 
-    digitalWrite(pinoLed, LOW); 
-  }  
-}
+  {
+   digitalWrite(warning_y, LOW); 
+   digitalWrite(advertencia, LOW);
+    if(analogRead(pinoLDR) > 100)
+    { 
+      for(i=0; i<3; i++)
+      {
+      digitalWrite(pinoLed, HIGH);
+      digitalWrite(testLed, HIGH);
+      delay(800);
+      digitalWrite(pinoLed, LOW);
+      digitalWrite(testLed, LOW);  
+      digitalWrite(LDRblueLed1, HIGH);
+      digitalWrite(LDRblueLed2, HIGH);
+      delay(800);
+      digitalWrite(LDRblueLed1, LOW);
+      digitalWrite(LDRblueLed2, LOW); 
+      }
+    }else{ 
+      digitalWrite(pinoLed, LOW);
+      digitalWrite(testLed, LOW); 
+         }  
+  }
 }
 void speed1() {
     
@@ -188,6 +212,8 @@ void speed1() {
   digitalWrite(amarelo2, LOW);
   digitalWrite(verde2, HIGH); 
   delay(100);
+  digitalWrite(verde2, LOW); 
+  return;
 }
 void speed2() {
    
@@ -247,6 +273,8 @@ void speed2() {
   digitalWrite(amarelo2, LOW);
   digitalWrite(verde2, HIGH); 
   delay(50);
+  digitalWrite(verde2, LOW); 
+  return;
 }
 void speed3() {
     
@@ -291,8 +319,6 @@ void speed3() {
   digitalWrite(amarelo, LOW);
   digitalWrite(verde, HIGH); delay(25);
 
-  
-  //ligar AZUL:
   digitalWrite(verde, LOW);
   digitalWrite(azul, HIGH); delay(25);
 
@@ -308,4 +334,7 @@ void speed3() {
   digitalWrite(amarelo2, LOW);
   digitalWrite(verde2, HIGH); 
   delay(25);
+  digitalWrite(verde2, LOW);
+
+  return;
 }
